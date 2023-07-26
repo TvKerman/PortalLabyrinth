@@ -40,11 +40,11 @@ public class CreaterGraph : MonoBehaviour
         // graph.ConnectNodes(countNode - 1, 0);
 
         graph = GenerateGraph(countNode,5);
-        
-        for (short i = 0; i < countNode; i++)
+        Int64 count = graph.CountNode;
+        for (Int64 i = 0; i < count; i++)
         {
-            nodes.Add(Instantiate(prefabNode, GetNodePosition(i, countNode), new Quaternion()));
-            nodes[i].GetComponent<InfoNode>().node = graph.GetNodeById(i);
+            nodes.Add(Instantiate(prefabNode, GetNodePosition(i, count), new Quaternion()));
+            nodes[(Int32)i].GetComponent<InfoNode>().node = graph.GetNodeById(i);
         }
     }
 
@@ -79,12 +79,12 @@ public class CreaterGraph : MonoBehaviour
                 lines.Add(line);
                 line.GetComponent<LineRenderer>().SetPosition(0, nodes[i].transform.position);
                 line.GetComponent<LineRenderer>().SetPosition(1,
-                    nodes[(int)(nodes[i].GetComponent<InfoNode>().node.Childs[j])].transform.position);
+                nodes[(int)(nodes[i].GetComponent<InfoNode>().node.Childs[j])].transform.position);
             }
         }
     }
 
-    private Vector3 GetNodePosition(Int32 idNode, Int32 counNode)
+    private Vector3 GetNodePosition(Int64 idNode, Int64 counNode)
     {
         float sin = (float)(Math.Sin((Math.PI * 2) / counNode * idNode));
         float cos = (float)(Math.Cos((Math.PI * 2) / counNode * idNode));
@@ -119,8 +119,14 @@ public class CreaterGraph : MonoBehaviour
         
         for (int i = 0; i < countOfConnects; i++)
         {
-            rand.Next(0, countOfConnects);
-            
+            Int32 x = rand.Next(totalCountCrosses);
+            Int32 y = rand.Next(totalCountCrosses);
+            while (tmpMatrixOfCrosses[x][y] || tmpMatrixOfCrosses[y][x]) 
+            { 
+                x = rand.Next(totalCountCrosses);
+                y = rand.Next(totalCountCrosses);
+            }
+            tmpMatrixOfCrosses[x][y] = true;
         }
         // tmpMatrixOfCrosses = KraskalsAlgorithm(out exit, totalCountCrosses);
 
@@ -132,6 +138,7 @@ public class CreaterGraph : MonoBehaviour
                 if (tmpMatrixOfCrosses[i][j])
                 {
                     Node corridor = new Node(totalCountCrosses + countOfCorridors, 1, NodeType.Corridor);
+                    countOfCorridors++;
                     resGraph.AddNode(corridor);
                     
                     resGraph.ConnectNodes(listOfCrossesId[i], corridor.Id);

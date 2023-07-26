@@ -7,10 +7,12 @@ using UnityEngine;
 public class Graph
 {
     private Dictionary<Int64, Node> vertices;
+    private Int64 countNode;
 
     public Graph()
     {
         vertices = new Dictionary<Int64, Node>();
+        countNode = 0;
     }
 
     public Node GetNodeById(Int64 id)
@@ -35,7 +37,10 @@ public class Graph
         }
         
         vertices.Add(nodeToAdd.Id, nodeToAdd);
+        countNode++;
     }
+
+    public Int64 CountNode { get { return countNode; } }
 
     public void ConnectNodes(Int64 firstNodeId, Int64 secondNodeId)
     {
