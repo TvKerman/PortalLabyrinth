@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Labyrinth;
 using UnityEngine;
 
-public class Graph : MonoBehaviour
+public class Graph
 {
     private Dictionary<Int64, Node> vertices;
 
@@ -45,6 +45,4 @@ public class Graph : MonoBehaviour
         firstNode.Childs.Add(secondNodeId);
         secondNode.Childs.Add(firstNodeId);
     }
-    
-    
 }

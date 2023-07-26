@@ -7,8 +7,8 @@ namespace Labyrinth
 {
     public enum NodeType
     {
+        Cross,
         Corridor,
-        Room,
     }
     
     public class Node
