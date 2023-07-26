@@ -23,6 +23,8 @@ namespace Labyrinth
 
         private Vector3 coordinates;
 
+  
+
         public Node(Int64 id, Int16 dimension)
         {
             childs = new List<Int64>();
@@ -31,6 +33,11 @@ namespace Labyrinth
             
             this.id = id;
             this.dimension = dimension;
+        }
+
+        public Node(Int64 id, Int16 dimension, NodeType type) : this(id, dimension) 
+        {
+            this.type = type;
         }
 
         public NodeType Type
