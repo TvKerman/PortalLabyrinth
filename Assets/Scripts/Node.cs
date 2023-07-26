@@ -1,56 +1,63 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Labyrinth
 {
-    enum NodeType
+    public enum NodeType
     {
         Corridor,
         Room,
     }
+    
     public class Node
     {
+        private List<Int64> childs;
+
         private NodeType type;
         private Int64 id;
-        private List<Int64> neighbors;
+        
         private Int16 exitCount;
-        private Int16 dimesion;
+        private Int16 dimension;
+
+        private Vector3 coordinates;
+
         public Node(Int64 id, Int16 dimension)
         {
+            childs = new List<Int64>();
+
+            exitCount = 0;
+            
             this.id = id;
-            this.dimesion = dimension;
-            this.neighbors = new List<Int64>();
-            this.exitCount = 0;
+            this.dimension = dimension;
         }
 
         public NodeType Type
         {
-            get { return this.type; }
-            set { this.type = value; }
+            get { return type; }
+            set { type = value; }
         }
 
         public Int64 Id
         {
-            get { return this.id; }
+            get { return id; }
         }
 
-        public List<Int64> Neighbors
+        public List<Int64> Childs
         {
-            get { return this.neighbors; }
+            get { return childs; }
         }
 
         public Int16 ExitCount
         {
-            get { return this.exitCount; }
-            set { this.exitCount = value; }
+            get { return exitCount; }
+            set { exitCount = value; }
         }
 
         public Int16 Dimension
         {
-            get { return this.dimesion; }
+            get { return dimension; }
         }
-
-
     }
 }
