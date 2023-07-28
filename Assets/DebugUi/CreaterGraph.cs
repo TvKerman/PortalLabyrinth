@@ -10,15 +10,14 @@ using Random = System.Random;
 public class CreaterGraph : MonoBehaviour
 {
     private Graph graph;
-    private Int32 countNode = 12;
+    private Int32 countNode = 6;
     private float radius = 5f;
     private Random rand;
-    
-    
+
+
     [SerializeField] private GameObject prefabNode;
     [SerializeField] private GameObject prefabLine;
-    
-    
+
 
     List<GameObject> nodes = new List<GameObject>();
     List<GameObject> lines = new List<GameObject>();
@@ -39,7 +38,7 @@ public class CreaterGraph : MonoBehaviour
         //
         // graph.ConnectNodes(countNode - 1, 0);
 
-        graph = GenerateGraph(countNode,5);
+        graph = GenerateGraph(countNode, 5);
         Int64 count = graph.CountNode;
         for (Int64 i = 0; i < count; i++)
         {
@@ -79,7 +78,7 @@ public class CreaterGraph : MonoBehaviour
                 lines.Add(line);
                 line.GetComponent<LineRenderer>().SetPosition(0, nodes[i].transform.position);
                 line.GetComponent<LineRenderer>().SetPosition(1,
-                nodes[(int)(nodes[i].GetComponent<InfoNode>().node.Childs[j])].transform.position);
+                    nodes[(int)(nodes[i].GetComponent<InfoNode>().node.Childs[j])].transform.position);
             }
         }
     }
@@ -102,7 +101,7 @@ public class CreaterGraph : MonoBehaviour
             resGraph.AddNode(node);
             listOfCrossesId.Add(node.Id);
         }
-        
+
         List<List<bool>> tmpMatrixOfCrosses = new List<List<bool>>();
 
         for (Int32 i = 0; i < totalCountCrosses; i++)
@@ -117,33 +116,44 @@ public class CreaterGraph : MonoBehaviour
         rand = new Random();
         int startVertex = rand.Next(0, totalCountCrosses);
         bool[] visited = new bool[totalCountCrosses];
-
-        visited[startVertex] = true;
-
+        int[] outDegrees = { 1, 2, 3, 2, 3, 1};
         while (!AllVerticesVisited(visited))
         {
-            int i = GetRandomVisitedVertex(visited, rand);
-            int j = GetRandomUnvisitedVertex(visited, rand);
+            int i = GetRandomUnvisitedVertex(visited, rand);
 
-            tmpMatrixOfCrosses[i][j] = true;
-            tmpMatrixOfCrosses[j][i] = true;
+            while (outDegrees[i] > 0)
+            {
+                int j = GetRandomUnvisitedVertex(visited, rand);
 
-            visited[j] = true;
-        }
-        
-        for (int i = 0; i < countOfConnects; i++)
-        {
-            Int32 x = rand.Next(totalCountCrosses);
-            Int32 y = rand.Next(totalCountCrosses);
-            while (tmpMatrixOfCrosses[x][y] || tmpMatrixOfCrosses[y][x]) 
-            { 
-                x = rand.Next(totalCountCrosses);
-                y = rand.Next(totalCountCrosses);
+                if (outDegrees[j] > 0)
+                {
+                    tmpMatrixOfCrosses[i][j] = true;
+                    outDegrees[i]--;
+                    outDegrees[j]--;
+
+                    if (outDegrees[j] == 0)
+                    {
+                        visited[j] = true;
+                    }
+                }
             }
-            tmpMatrixOfCrosses[x][y] = true;
+
+            visited[i] = true;
         }
 
-        int countOfCorridors = 0; 
+        // visited[startVertex] = true;
+        //
+        // while (!AllVerticesVisited(visited))
+        // {
+        //     int i = GetRandomVisitedVertex(visited, rand);
+        //     int j = GetRandomUnvisitedVertex(visited, rand);
+        //     tmpMatrixOfCrosses[i][j] = true;
+        //     tmpMatrixOfCrosses[j][i] = true;
+        //
+        //     visited[j] = true;
+        // }
+
+        int countOfCorridors = 0;
         for (int i = 0; i < totalCountCrosses; i++)
         {
             for (int j = 0; j < totalCountCrosses; j++)
@@ -153,7 +163,7 @@ public class CreaterGraph : MonoBehaviour
                     Node corridor = new Node(totalCountCrosses + countOfCorridors, 1, NodeType.Corridor);
                     countOfCorridors++;
                     resGraph.AddNode(corridor);
-                    
+
                     resGraph.ConnectNodes(listOfCrossesId[i], corridor.Id);
                     resGraph.ConnectNodes(corridor.Id, listOfCrossesId[j]);
                 }
@@ -162,6 +172,7 @@ public class CreaterGraph : MonoBehaviour
 
         return resGraph;
     }
+
     private bool AllVerticesVisited(bool[] visited)
     {
         foreach (bool v in visited)
@@ -171,9 +182,10 @@ public class CreaterGraph : MonoBehaviour
                 return false;
             }
         }
+
         return true;
     }
-    
+
     static int GetRandomVisitedVertex(bool[] visited, Random random)
     {
         int n = visited.Length;
@@ -182,6 +194,7 @@ public class CreaterGraph : MonoBehaviour
         {
             vertex = random.Next(0, n);
         }
+
         return vertex;
     }
 
@@ -193,9 +206,10 @@ public class CreaterGraph : MonoBehaviour
         {
             vertex = random.Next(0, n);
         }
+
         return vertex;
     }
-    
+
     private void addABouquetToATree(List<Int32> tree, Int32 numberTree, Int32 numberBouquet)
     {
         for (int i = 0; i < tree.Count; i++)
