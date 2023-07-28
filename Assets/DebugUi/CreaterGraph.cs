@@ -98,12 +98,11 @@ public class CreaterGraph : MonoBehaviour
 
         for (Int32 i = 0; i < totalCountCrosses; i++)
         {
-            Labyrinth.Node node = new Node(i, 1, NodeType.Cross);
+            Node node = new Node(i, 1, NodeType.Cross);
             resGraph.AddNode(node);
             listOfCrossesId.Add(node.Id);
         }
         
-        Int32 exit;
         List<List<bool>> tmpMatrixOfCrosses = new List<List<bool>>();
 
         for (Int32 i = 0; i < totalCountCrosses; i++)
@@ -116,6 +115,21 @@ public class CreaterGraph : MonoBehaviour
         }
 
         rand = new Random();
+        int startVertex = rand.Next(0, totalCountCrosses);
+        bool[] visited = new bool[totalCountCrosses];
+
+        visited[startVertex] = true;
+
+        while (!AllVerticesVisited(visited))
+        {
+            int i = GetRandomVisitedVertex(visited, rand);
+            int j = GetRandomUnvisitedVertex(visited, rand);
+
+            tmpMatrixOfCrosses[i][j] = true;
+            tmpMatrixOfCrosses[j][i] = true;
+
+            visited[j] = true;
+        }
         
         for (int i = 0; i < countOfConnects; i++)
         {
@@ -128,7 +142,6 @@ public class CreaterGraph : MonoBehaviour
             }
             tmpMatrixOfCrosses[x][y] = true;
         }
-        // tmpMatrixOfCrosses = KraskalsAlgorithm(out exit, totalCountCrosses);
 
         int countOfCorridors = 0; 
         for (int i = 0; i < totalCountCrosses; i++)
@@ -149,8 +162,40 @@ public class CreaterGraph : MonoBehaviour
 
         return resGraph;
     }
+    private bool AllVerticesVisited(bool[] visited)
+    {
+        foreach (bool v in visited)
+        {
+            if (!v)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    static int GetRandomVisitedVertex(bool[] visited, Random random)
+    {
+        int n = visited.Length;
+        int vertex = random.Next(0, n);
+        while (!visited[vertex])
+        {
+            vertex = random.Next(0, n);
+        }
+        return vertex;
+    }
 
-
+    static int GetRandomUnvisitedVertex(bool[] visited, Random random)
+    {
+        int n = visited.Length;
+        int vertex = random.Next(0, n);
+        while (visited[vertex])
+        {
+            vertex = random.Next(0, n);
+        }
+        return vertex;
+    }
+    
     private void addABouquetToATree(List<Int32> tree, Int32 numberTree, Int32 numberBouquet)
     {
         for (int i = 0; i < tree.Count; i++)
