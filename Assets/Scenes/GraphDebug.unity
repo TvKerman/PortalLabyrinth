@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546fadee2242b1941b7d3d2eaa2cb5f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  countCrossNode: 5
+  countCrossNode: 6
   maxCountExits: 5
   countCorridorsNode: 10
   "useGraphGeneratio\u0442ByList": 0
