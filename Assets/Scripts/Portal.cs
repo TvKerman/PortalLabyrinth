@@ -32,15 +32,16 @@ namespace Labyrinth
 
                 // change only x and z coordinates
                 Vector3 tmp = otherPortals[currentDimension].transform.position;
-                tmp.y += height - 0.2f; // Note (Denis): 0.2f is a small offset 
-                                        // to avoid jump after the portal
+                tmp.y += height /*- 0.2f*/; // Note (Denis): 0.2f is a small 
+                                            // offset to avoid jump after the 
+                                            // portal (if happens)
                 other.transform.position = tmp;
 
                 // change rotation of player to match rotation of portal he is 
                 // teleporting to, but only on y axis
                 other.transform.rotation = Quaternion.Euler(0,
-                otherPortals[currentDimension].transform
-                .rotation.eulerAngles.y, 0);
+                    otherPortals[currentDimension].transform
+                    .rotation.eulerAngles.y, 0);
 
                 // rotate player by 180 on y axis (bcoz portals facing in the 
                 // direction of theit input)
@@ -52,7 +53,8 @@ namespace Labyrinth
 
                 // wait until player is out of trigger
                 while (other.GetComponent<Collider>().bounds.Intersects(
-                otherPortals[currentDimension].GetComponent<Collider>().bounds))
+                    otherPortals[currentDimension].GetComponent<Collider>()
+                    .bounds))
                 {
                     // do nothing
                 }
@@ -90,7 +92,7 @@ namespace Labyrinth
                 Input.GetKeyDown(KeyCode.T))
             {
                 portal.GetComponent<MeshRenderer>().enabled =
-                !portal.GetComponent<MeshRenderer>().enabled;
+                    !portal.GetComponent<MeshRenderer>().enabled;
             }
         }
 
