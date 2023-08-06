@@ -1,38 +1,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace Labyrinth
 {
-    public enum NodeType
+    enum NodeType
     {
         Cross,
         Corridor,
     }
-    
     public class Node
     {
-        private List<Int64> childs;
-
         private NodeType type;
         private Int64 id;
-        
+        private List<Int64> neighbors;
         private Int16 exitCount;
+<<<<<<< HEAD
         private Int16 dimension;
 
         private Vector3 coordinates;
 
   
 
+=======
+        private Int16 dimesion;
+>>>>>>> parent of 89fab3a (Merge remote-tracking branch 'remotes/origin/Roman')
         public Node(Int64 id, Int16 dimension)
         {
-            childs = new List<Int64>();
-
-            exitCount = 0;
-            
             this.id = id;
-            this.dimension = dimension;
+            this.dimesion = dimension;
+            this.neighbors = new List<Int64>();
+            this.exitCount = 0;
         }
 
         public Node(Int64 id, Int16 dimension, NodeType type) : this(id, dimension) 
@@ -47,29 +45,31 @@ namespace Labyrinth
 
         public NodeType Type
         {
-            get { return type; }
-            set { type = value; }
+            get { return this.type; }
+            set { this.type = value; }
         }
 
         public Int64 Id
         {
-            get { return id; }
+            get { return this.id; }
         }
 
-        public List<Int64> Childs
+        public List<Int64> Neighbors
         {
-            get { return childs; }
+            get { return this.neighbors; }
         }
 
         public Int16 ExitCount
         {
-            get { return exitCount; }
-            set { exitCount = value; }
+            get { return this.exitCount; }
+            set { this.exitCount = value; }
         }
 
         public Int16 Dimension
         {
-            get { return dimension; }
+            get { return this.dimesion; }
         }
+
+
     }
 }
