@@ -6,10 +6,21 @@ namespace Labyrinth
 {
     public class Portal : MonoBehaviour
     {
-        private GameObject portal;
-        // 4 portals in total for different dimensions
-        [SerializeField] private GameObject[] otherPortals = new GameObject[4];
+        /// <summary>
+        /// Portal script
+        /// </summary>
+        /// <remarks>
+        /// This script is responsible for teleporting player to another
+        /// portal
+        /// 
+        /// ASSUMING:
+        /// - tag of player is "Player"
+        /// </remarks>
 
+        private GameObject portal; // portal itself, assigned in Start()
+
+        // 4 other portals in total for different dimensions
+        [SerializeField] private GameObject[] otherPortals = new GameObject[4];
 
 
         private void Start()
@@ -49,7 +60,7 @@ namespace Labyrinth
 
                 // player should exit trigger to avoid teleporting back and 
                 // forth
-                DisablePortal(currentDimension);
+                DisablePortalCollider(currentDimension);
 
                 // wait until player is out of trigger
                 while (other.GetComponent<Collider>().bounds.Intersects(
@@ -67,33 +78,107 @@ namespace Labyrinth
         }
 
 
-        private void DisablePortal(int index)
+        private void DisablePortalCollider(int index)
         {
+            /// <summary>
+            /// Disable portal's collider to avoid teleporting back and forth
+            /// </summary>
+            /// <param name="index">
+            /// Index of portal to disable
+            /// </param>
             otherPortals[index].GetComponent<Collider>().enabled = false;
         }
-        private void EnablePortal(int index)
+        private void EnablePortalCollider(int index)
         {
+            /// <summary>
+            /// Enable portal's collider to allow teleporting
+            /// </summary>
+            /// <param name="index">
+            /// Index of portal to enable
+            /// </param>
             otherPortals[index].GetComponent<Collider>().enabled = true;
         }
 
         private IEnumerator<WaitForSeconds> EnablePortalAfterDelay(int index)
         {
+            /// <summary>
+            /// Enable portal after 1 second to avoid teleporting back and
+            /// forth
+            /// </summary>
+            /// <param name="index">
+            /// Index of portal to enable
+            /// </param>
             yield return new WaitForSeconds(1);
-            EnablePortal(index);
+            EnablePortalCollider(index);
         }
 
-        // if pressed 'ctrl+shift+alt+T' switcj mesh renderer of portals for
-        // debug purposes
-        private void Update()
+        private int UpdatePortalColor(void)
         {
-            if (Input.GetKey(KeyCode.LeftControl) &&
-                Input.GetKey(KeyCode.LeftShift) &&
-                Input.GetKey(KeyCode.LeftAlt) &&
-                Input.GetKeyDown(KeyCode.T))
+            /// <summary>
+            /// Change portal's albedo color to match dimension
+            /// 0 = #00FF0080
+            /// 1 = #0000FF80
+            /// 2 = #FF00FF80
+            /// 3 = #FFFF0080
+            /// </summary>
+            /// <returns>
+            /// 1 if success
+            /// 0 if fail
+            /// </returns>
+            try
+            {
+                GameObject other = GameObject.FindGameObjectWithTag("Player");
+                switch (other.GetComponent<Player>().Dimension)
+                {
+                    case 0:
+                        portal.GetComponent<MeshRenderer>().material.color =
+                            new Color(0, 1, 0, 0.5f);
+                        break;
+                    case 1:
+                        portal.GetComponent<MeshRenderer>().material.color =
+                            new Color(0, 0, 1, 0.5f);
+                        break;
+                    case 2:
+                        portal.GetComponent<MeshRenderer>().material.color =
+                            new Color(1, 0, 1, 0.5f);
+                        break;
+                    case 3:
+                        portal.GetComponent<MeshRenderer>().material.color =
+                            new Color(1, 1, 0, 0.5f);
+                        break;
+                }
+                return 1;
+            }
+            catch (System.Exception)
+            {
+                return 0;
+            }
+        }
+
+        private void UpdatePortalVisibility(bool condition)
+        {
+            /// <summary>
+            /// Change portal's visibility (ON/OFF) based on condition update
+            /// </summary>
+            if (condition)
             {
                 portal.GetComponent<MeshRenderer>().enabled =
                     !portal.GetComponent<MeshRenderer>().enabled;
             }
+        }
+
+        private void Update()
+        {
+            // if pressed 'Ctrl+Shift+Alt+T' switch visibility of portals for
+            // debug purposes
+            UpdatePortalVisibility(
+                Input.GetKey(KeyCode.LeftControl) &&
+                Input.GetKey(KeyCode.LeftShift) &&
+                Input.GetKey(KeyCode.LeftAlt) &&
+                Input.GetKeyDown(KeyCode.T))
+            // change portal's color to match Player's dimension
+            UpdatePortalColor();
+
         }
 
     }
