@@ -112,7 +112,7 @@ namespace Labyrinth
             EnablePortalCollider(index);
         }
 
-        private int UpdatePortalColor(void)
+        private int UpdatePortalColor()
         {
             /// <summary>
             /// Change portal's albedo color to match dimension
@@ -175,7 +175,7 @@ namespace Labyrinth
                 Input.GetKey(KeyCode.LeftControl) &&
                 Input.GetKey(KeyCode.LeftShift) &&
                 Input.GetKey(KeyCode.LeftAlt) &&
-                Input.GetKeyDown(KeyCode.T))
+                Input.GetKeyDown(KeyCode.T));
             // change portal's color to match Player's dimension
             UpdatePortalColor();
 

@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using Labyrinth;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,58 +13,29 @@ using Random = System.Random;
 public class CreaterGraph : MonoBehaviour
 {
     private Graph graph;
-    private float radius = 5f;
+    private float radius = 10f;
     private Random rand;
 
     [SerializeField] private Int32 countCrossNode;
     [SerializeField] private Int32 maxCountExits;
     [SerializeField] private Int16 countCorridorsNode;
 
-    [SerializeField] private bool useGraphGeneratioòByList = false;
-
-    [SerializeField] private List<Int16> countExits;
-
     [SerializeField] private GameObject prefabNode;
     [SerializeField] private GameObject prefabLine;
-    
+
     List<GameObject> nodes = new List<GameObject>();
     List<GameObject> lines = new List<GameObject>();
 
     private void Awake()
     {
-        // graph = new Graph();
-        //
-        // for (int i = 0; i < countNode; i++)
-        // {
-        //     graph.AddNode(new Labyrinth.Node(i, 2, i % 2 == 0 ? Labyrinth.NodeType.Cross : Labyrinth.NodeType.Corridor));
-        // }
-        //
-        // for (int i = 0; i < countNode - 1; i++)
-        // {
-        //     graph.ConnectNodes(i, i + 1);
-        // }
-        //
-        // graph.ConnectNodes(countNode - 1, 0);
-        if (useGraphGeneratioòByList)
-        {
-            if (countCrossNode != countExits.Count)
-            {
-                throw new Exception();
-            }
 
-            graph = GenerateGraph(countCrossNode, countExits);
-        }
-        else 
-        {
-            graph = GenerateGraph(countCrossNode, maxCountExits, countCorridorsNode);
-        }
-
+        graph = GenerateGraphWithTheAdditionOfDimensions(countCrossNode, maxCountExits, countCorridorsNode);
 
         Int64 count = graph.CountNode;
         for (Int64 i = 0; i < count; i++)
         {
             Node tmp = graph.GetNodeById(i);
-            nodes.Add(Instantiate(prefabNode, GetNodePosition(i, countCrossNode, count - countCrossNode, tmp.Type, tmp.Dimension), new Quaternion()));
+            nodes.Add(Instantiate(prefabNode, GetNodePosition(i, countCrossNode, countCorridorsNode, tmp.Type, tmp.Dimension), new Quaternion()));
             nodes[(Int32)i].GetComponent<InfoNode>().node = graph.GetNodeById(i);
         }
     }
@@ -105,17 +79,17 @@ public class CreaterGraph : MonoBehaviour
     private Vector3 GetNodePosition(Int64 idNode, Int64 countCrossNode, Int64 countCorridorNode,
                                                 NodeType type, Int16 dimension)
     {
-        float sin = (float)(Math.Sin((Math.PI * 2) / 
-            (type == NodeType.Cross ? countCrossNode: countCorridorNode) *
+        float sin = (float)(Math.Sin((Math.PI * 2) /
+            (type == NodeType.Cross ? countCrossNode : countCorridorNode) *
             (type == NodeType.Cross ? idNode : idNode - countCrossNode)));
         float cos = (float)(Math.Cos((Math.PI * 2) /
-            (type == NodeType.Cross ? countCrossNode: countCorridorNode) * 
-            (type == NodeType.Cross ? idNode: idNode - countCrossNode)));
+            (type == NodeType.Cross ? countCrossNode : countCorridorNode) *
+            (type == NodeType.Cross ? idNode : idNode - countCrossNode)));
         if (type == NodeType.Cross)
         {
             return new Vector3(radius * cos, 0, radius * sin);
         }
-        return new Vector3(radius * cos, dimension * 5, radius * sin);
+        return new Vector3(dimension * dimension * radius * cos, dimension * 5, dimension * dimension * radius * sin);
     }
 
     public Graph GenerateGraph(Int32 totalCountCrosses)
@@ -129,7 +103,7 @@ public class CreaterGraph : MonoBehaviour
             resGraph.AddNode(node);
             listOfCrossesId.Add(node.Id);
         }
-        
+
         List<List<bool>> tmpMatrixOfCrosses = new List<List<bool>>();
 
         for (Int32 i = 0; i < totalCountCrosses; i++)
@@ -153,12 +127,11 @@ public class CreaterGraph : MonoBehaviour
             int j = GetRandomUnvisitedVertex(visited, rand);
 
             tmpMatrixOfCrosses[i][j] = true;
-            //tmpMatrixOfCrosses[j][i] = true;
 
             visited[j] = true;
         }
 
-        int countOfCorridors = 0; 
+        int countOfCorridors = 0;
         for (int i = 0; i < totalCountCrosses; i++)
         {
             for (int j = 0; j < totalCountCrosses; j++)
@@ -168,7 +141,7 @@ public class CreaterGraph : MonoBehaviour
                     Node corridor = new Node(totalCountCrosses + countOfCorridors, 1, NodeType.Corridor);
                     countOfCorridors++;
                     resGraph.AddNode(corridor);
-                    
+
                     resGraph.ConnectNodes(listOfCrossesId[i], corridor.Id);
                     resGraph.ConnectNodes(corridor.Id, listOfCrossesId[j]);
                 }
@@ -182,80 +155,19 @@ public class CreaterGraph : MonoBehaviour
     {
         List<Int64> listOfCrossesId = new List<Int64>();
         Graph resGraph = new Graph();
-        Int64 countAllExits = 0;
-        for (Int32 i = 0; i < totalCountCrosses; i++)
-        {
-            Node node = new Node(i, 1, NodeType.Cross, countConnectsList[i]);
-            countAllExits += countConnectsList[i]; 
-            resGraph.AddNode(node);
-            listOfCrossesId.Add(node.Id);
-        }
+        Int64 countAllExits = countConnectsList.Sum(x => Convert.ToInt64(x));
 
-        List<List<Int16>> tmpMatrixOfCrosses = new List<List<Int16>>();
+        AddCrossesToTheGraph(totalCountCrosses, listOfCrossesId, resGraph);
 
-        for (Int32 i = 0; i < totalCountCrosses; i++)
-        {
-            tmpMatrixOfCrosses.Add(new List<Int16>());
-            for (Int32 j = 0; j < totalCountCrosses; j++)
-            {
-                tmpMatrixOfCrosses[i].Add(0);
-            }
-        }
+        List<List<Int16>> tmpMatrixOfCrosses = CreateNonBoolMatrixOfCrosses(totalCountCrosses);
 
         rand = new Random();
-        //int startVertex = rand.Next(0, totalCountCrosses);
-        //bool[] visited = new bool[totalCountCrosses];
-        //
-        //visited[startVertex] = true;
-        //
-        //while (!AllVerticesVisited(visited))
-        //{
-        //    int i = GetRandomVisitedVertex(visited, rand);
-        //    int j = GetRandomUnvisitedVertex(visited, rand);
-        //
-        //    tmpMatrixOfCrosses[i][j] = true;
-        //    tmpMatrixOfCrosses[j][i] = true;
-        //
-        //    visited[j] = true;
-        //}
-        
-        while (countAllExits != 0) 
-        {
-            int firstVertex = rand.Next(0, totalCountCrosses);
-            int secondVertex = rand.Next(0, totalCountCrosses);
-            
-            while (countConnectsList[firstVertex] == 0 ||
-                    countConnectsList[secondVertex] == 0 ||
-                    (secondVertex == firstVertex && countConnectsList[firstVertex] < 2)) 
-            {
-                secondVertex = rand.Next(0, totalCountCrosses);
-                firstVertex = rand.Next(0, totalCountCrosses);
-            }
 
-            tmpMatrixOfCrosses[firstVertex][secondVertex] += 1;
-            
-            countConnectsList[firstVertex]--;
-            countConnectsList[secondVertex]--;
-            countAllExits -= 2;
-        }
+        SetARandomMatrixGraph(totalCountCrosses, rand,
+                                countConnectsList, ref countAllExits,
+                                                    tmpMatrixOfCrosses);
 
-        int countOfCorridors = 0;
-        for (int i = 0; i < totalCountCrosses; i++)
-        {
-            for (int j = 0; j < totalCountCrosses; j++)
-            {
-                while (tmpMatrixOfCrosses[i][j] != 0)
-                {
-                    Node corridor = new Node(totalCountCrosses + countOfCorridors, 1, NodeType.Corridor);
-                    countOfCorridors++;
-                    resGraph.AddNode(corridor);
-
-                    resGraph.ConnectNodes(listOfCrossesId[i], corridor.Id);
-                    resGraph.ConnectNodes(corridor.Id, listOfCrossesId[j]);
-                    tmpMatrixOfCrosses[i][j] -= 1;
-                }
-            }
-        }
+        AddCorridorsToTheGraphByMatrix(tmpMatrixOfCrosses, totalCountCrosses, 1, listOfCrossesId, resGraph);
 
         return resGraph;
     }
@@ -273,8 +185,8 @@ public class CreaterGraph : MonoBehaviour
         Int32 currentCountAllExits = 0;
         List<Int16> currentCountExits = new List<Int16>();
 
-        SetARandomConnectedMatrixGraph(totalCountCrosses, rand, 
-                                        currentCountExits, ref currentCountAllExits, 
+        SetARandomConnectedMatrixGraph(totalCountCrosses, rand,
+                                        currentCountExits, ref currentCountAllExits,
                                                               tmpMatrixOfCrosses);
 
 
@@ -290,7 +202,50 @@ public class CreaterGraph : MonoBehaviour
         return resGraph;
     }
 
-    private void AddCrossesToTheGraph(Int32 countCrosses, List<Int64> listOfCrossesId, Graph graph) 
+    public Graph GenerateGraphWithTheAdditionOfDimensions(Int32 totalCountCrosses, Int32 maxExitsOneCross, Int32 countCorridors)
+    {
+        List<Int64> listOfCrossesId = new List<Int64>();
+        Graph resGraph = new Graph();
+
+        AddCrossesToTheGraph(totalCountCrosses, listOfCrossesId, resGraph);
+
+        List<List<bool>> boolMatrixGraph = CreateMatrixOfCrosses(totalCountCrosses);
+
+        rand = new Random();
+        Int32 currentCountAllExits = 0;
+        List<Int16> currentCountExits = new List<Int16>();
+
+        SetARandomConnectedMatrixGraph(totalCountCrosses, rand,
+                                        currentCountExits, ref currentCountAllExits,
+                                                              boolMatrixGraph);
+
+
+        AddAdditionalRandomCorridorsToTheGraph(totalCountCrosses, maxExitsOneCross,
+                                               countCorridors, ref currentCountAllExits,
+                                               currentCountExits, rand, boolMatrixGraph);
+
+        SetCountExitsAtCrosses(totalCountCrosses, listOfCrossesId, currentCountExits, resGraph);
+
+        AddCorridorsToTheGraphByMatrix(boolMatrixGraph, totalCountCrosses, listOfCrossesId, resGraph);
+        WriteDataToFile(boolMatrixGraph, 1);
+
+        for (Int16 i = 2; i < 5; i++)
+        {
+            List<List<Int16>> intMatrixGraph = CreateNonBoolMatrixOfCrosses(totalCountCrosses);
+            Int64 countAllExits = currentCountExits.Sum(x => Convert.ToInt64(x));
+
+            SetARandomMatrixGraph(totalCountCrosses, rand,
+                                  new List<Int16>(currentCountExits), ref countAllExits,
+                                                    intMatrixGraph);
+            WriteDataToFile(intMatrixGraph, i);
+            AddCorridorsToTheGraphByMatrix(intMatrixGraph, totalCountCrosses, i, listOfCrossesId, resGraph);
+
+        }
+
+        return resGraph;
+    }
+
+    private void AddCrossesToTheGraph(Int32 countCrosses, List<Int64> listOfCrossesId, Graph graph)
     {
         for (Int32 i = 0; i < countCrosses; i++)
         {
@@ -300,7 +255,7 @@ public class CreaterGraph : MonoBehaviour
         }
     }
 
-    List<List<bool>> CreateMatrixOfCrosses(Int32 countCrosses) 
+    List<List<bool>> CreateMatrixOfCrosses(Int32 countCrosses)
     {
         List<List<bool>> matrix = new List<List<bool>>();
 
@@ -316,10 +271,26 @@ public class CreaterGraph : MonoBehaviour
         return matrix;
     }
 
-    private void SetARandomConnectedMatrixGraph(Int32 countCrosses, Random random, 
-                                                List<Int16> currentCountExits, 
+    List<List<Int16>> CreateNonBoolMatrixOfCrosses(Int32 countCrosses)
+    {
+        List<List<Int16>> matrix = new List<List<Int16>>();
+
+        for (Int32 i = 0; i < countCrosses; i++)
+        {
+            matrix.Add(new List<Int16>());
+            for (Int32 j = 0; j < countCrosses; j++)
+            {
+                matrix[i].Add(0);
+            }
+        }
+
+        return matrix;
+    }
+
+    private void SetARandomConnectedMatrixGraph(Int32 countCrosses, Random random,
+                                                List<Int16> currentCountExits,
                                                 ref Int32 currentCountAllExits,
-                                                List<List<bool>> matrixGraph) 
+                                                List<List<bool>> matrixGraph)
     {
         bool[] visited = new bool[countCrosses];
         int startVertex = random.Next(0, countCrosses);
@@ -345,8 +316,8 @@ public class CreaterGraph : MonoBehaviour
     }
 
     private void AddAdditionalRandomCorridorsToTheGraph(Int32 countCrosses, Int32 maxExitsOneCross, Int32 countCorridors,
-                                                        ref Int32 currentCountAllExits, List<Int16> currentCountExits, 
-                                                        Random random, List<List<bool>> matrixGraph) 
+                                                        ref Int32 currentCountAllExits, List<Int16> currentCountExits,
+                                                        Random random, List<List<bool>> matrixGraph)
     {
         while (currentCountAllExits != countCorridors)
         {
@@ -370,8 +341,8 @@ public class CreaterGraph : MonoBehaviour
         }
     }
 
-    private void SetCountExitsAtCrosses(Int32 countCrosses, List<Int64> listOfCrossesId, 
-                                        List<Int16> currentCountExits, Graph graph) 
+    private void SetCountExitsAtCrosses(Int32 countCrosses, List<Int64> listOfCrossesId,
+                                        List<Int16> currentCountExits, Graph graph)
     {
         for (Int32 i = 0; i < countCrosses; i++)
         {
@@ -380,8 +351,8 @@ public class CreaterGraph : MonoBehaviour
         }
     }
 
-    private void AddCorridorsToTheGraphByMatrix(List<List<bool>> matrix, Int32 countCrosses, 
-                                                List<Int64> listOfCrossesId, Graph graph) 
+    private void AddCorridorsToTheGraphByMatrix(List<List<bool>> matrix, Int32 countCrosses,
+                                                List<Int64> listOfCrossesId, Graph graph)
     {
         int countOfCorridors = 0;
         for (int i = 0; i < countCrosses; i++)
@@ -401,6 +372,120 @@ public class CreaterGraph : MonoBehaviour
         }
     }
 
+    private void AddCorridorsToTheGraphByMatrix(List<List<Int16>> matrix, Int32 countCrosses, Int16 dimension,
+                                            List<Int64> listOfCrossesId, Graph graph)
+    {
+        Int64 idCorridor = graph.CountNode;
+        for (int i = 0; i < countCrosses; i++)
+        {
+            for (int j = 0; j < countCrosses; j++)
+            {
+                while (matrix[i][j] != 0)
+                {
+                    Node corridor = new Node(idCorridor, dimension, NodeType.Corridor);
+                    idCorridor++;
+                    graph.AddNode(corridor);
+
+                    graph.ConnectNodes(listOfCrossesId[i], corridor.Id);
+                    graph.ConnectNodes(corridor.Id, listOfCrossesId[j]);
+                    matrix[i][j] -= 1;
+                }
+            }
+        }
+    }
+
+    private void SetARandomMatrixGraph(Int32 countCrosses, Random random,
+                                                List<Int16> countConnectsList,
+                                                ref Int64 countAllExits,
+                                                List<List<Int16>> matrixGraph)
+    {
+        while (countAllExits != 0)
+        {
+            int firstVertex = random.Next(0, countCrosses);
+            int secondVertex = random.Next(0, countCrosses);
+
+            while (countConnectsList[firstVertex] == 0 ||
+                    countConnectsList[secondVertex] == 0 ||
+                    (secondVertex == firstVertex && countConnectsList[firstVertex] < 2))
+            {
+                secondVertex = random.Next(0, countCrosses);
+                firstVertex = random.Next(0, countCrosses);
+            }
+
+            matrixGraph[firstVertex][secondVertex] += 1;
+
+            countConnectsList[firstVertex]--;
+            countConnectsList[secondVertex]--;
+            countAllExits -= 2;
+        }
+    }
+
+    private string ConvertMatrixToString(List<List<bool>> matrix)
+    {
+        string result = "";
+        foreach (var row in matrix)
+        {
+            foreach (var value in row)
+            {
+                result += Convert.ToString(Convert.ToInt16(value)) + " ";
+            }
+            result += "\n";
+        }
+
+        return result;
+    }
+
+    private string ConvertMatrixToString(List<List<Int16>> matrix)
+    {
+        string result = "";
+        foreach (var row in matrix)
+        {
+            foreach (var value in row)
+            {
+                result += Convert.ToString(value) + " ";
+            }
+            result += "\n";
+        }
+
+        return result;
+    }
+
+    private void WriteDataToFile(List<List<bool>> matrix, Int16 dimension)
+    {
+        FileStream? fstream = null;
+        try
+        {
+            string fileName = "dimension" + Convert.ToString(dimension) + ".txt";
+            fstream = new FileStream(fileName, FileMode.Create);
+            byte[] buffer = Encoding.Default.GetBytes(ConvertMatrixToString(matrix));
+            fstream.Write(buffer, 0, buffer.Length);
+        }
+        catch (Exception ex)
+        { }
+        finally
+        {
+            fstream?.Close();
+        }
+    }
+
+    private void WriteDataToFile(List<List<Int16>> matrix, Int16 dimension)
+    {
+        FileStream? fstream = null;
+        try
+        {
+            string fileName = "dimension" + Convert.ToString(dimension) + ".txt";
+            fstream = new FileStream(fileName, FileMode.Create);
+            byte[] buffer = Encoding.Default.GetBytes(ConvertMatrixToString(matrix));
+            fstream.Write(buffer, 0, buffer.Length);
+        }
+        catch (Exception ex)
+        { }
+        finally
+        {
+            fstream?.Close();
+        }
+    }
+
     private bool AllVerticesVisited(bool[] visited)
     {
         foreach (bool v in visited)
@@ -412,7 +497,7 @@ public class CreaterGraph : MonoBehaviour
         }
         return true;
     }
-    
+
     static int GetRandomVisitedVertex(bool[] visited, Random random)
     {
         int n = visited.Length;
@@ -434,7 +519,7 @@ public class CreaterGraph : MonoBehaviour
         }
         return vertex;
     }
-    
+
     private void addABouquetToATree(List<Int32> tree, Int32 numberTree, Int32 numberBouquet)
     {
         for (int i = 0; i < tree.Count; i++)
