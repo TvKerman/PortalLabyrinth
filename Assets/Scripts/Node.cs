@@ -40,6 +40,11 @@ namespace Labyrinth
             this.type = type;
         }
 
+        public Node(Int64 id, Int16 dimension, NodeType type, Int16 exits) : this(id, dimension, type) 
+        {
+            this.exitCount = exits;
+        }
+
         public NodeType Type
         {
             get { return type; }

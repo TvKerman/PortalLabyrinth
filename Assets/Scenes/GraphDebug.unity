@@ -152,6 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546fadee2242b1941b7d3d2eaa2cb5f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  countCrossNode: 5
+  maxCountExits: 5
+  countCorridorsNode: 10
+  "useGraphGeneratio\u0442ByList": 0
+  countExits: 
   prefabNode: {fileID: 2726027564308277527, guid: c681777ff212c2b4a93b29101382a3cd, type: 3}
   prefabLine: {fileID: 1985636688291583639, guid: 093f834864feac34fa37b896d83f771c, type: 3}
 --- !u!4 &1082662363
