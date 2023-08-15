@@ -20,10 +20,6 @@ public class CreaterGraph : MonoBehaviour
     [SerializeField] private Int32 maxCountExits;
     [SerializeField] private Int16 countCorridorsNode;
 
-    //[SerializeField] private bool useGraphGeneratioòByList = false;
-
-    //[SerializeField] private List<Int16> countExits;
-
     [SerializeField] private GameObject prefabNode;
     [SerializeField] private GameObject prefabLine;
 
@@ -32,33 +28,6 @@ public class CreaterGraph : MonoBehaviour
 
     private void Awake()
     {
-        // graph = new Graph();
-        //
-        // for (int i = 0; i < countNode; i++)
-        // {
-        //     graph.AddNode(new Labyrinth.Node(i, 2, i % 2 == 0 ? Labyrinth.NodeType.Cross : Labyrinth.NodeType.Corridor));
-        // }
-        //
-        // for (int i = 0; i < countNode - 1; i++)
-        // {
-        //     graph.ConnectNodes(i, i + 1);
-        // }
-        //
-        // graph.ConnectNodes(countNode - 1, 0);
-
-        //if (useGraphGeneratioòByList)
-        //{
-        //    if (countCrossNode != countExits.Count)
-        //    {
-        //        throw new Exception();
-        //    }
-        //
-        //    graph = GenerateGraph(countCrossNode, countExits);
-        //}
-        //else
-        //{
-        //    graph = GenerateGraph(countCrossNode, maxCountExits, countCorridorsNode);
-        //}
 
         graph = GenerateGraphWithTheAdditionOfDimensions(countCrossNode, maxCountExits, countCorridorsNode);
 
@@ -158,7 +127,6 @@ public class CreaterGraph : MonoBehaviour
             int j = GetRandomUnvisitedVertex(visited, rand);
 
             tmpMatrixOfCrosses[i][j] = true;
-            //tmpMatrixOfCrosses[j][i] = true;
 
             visited[j] = true;
         }
@@ -188,71 +156,18 @@ public class CreaterGraph : MonoBehaviour
         List<Int64> listOfCrossesId = new List<Int64>();
         Graph resGraph = new Graph();
         Int64 countAllExits = countConnectsList.Sum(x => Convert.ToInt64(x));
-        //for (Int32 i = 0; i < totalCountCrosses; i++)
-        //{
-        //    Node node = new Node(i, 1, NodeType.Cross, countConnectsList[i]);
-        //    //countAllExits += countConnectsList[i]; 
-        //    resGraph.AddNode(node);
-        //    listOfCrossesId.Add(node.Id);
-        //}
+
         AddCrossesToTheGraph(totalCountCrosses, listOfCrossesId, resGraph);
 
         List<List<Int16>> tmpMatrixOfCrosses = CreateNonBoolMatrixOfCrosses(totalCountCrosses);
-
-        //new List<List<Int16>>();
-        //
-        //for (Int32 i = 0; i < totalCountCrosses; i++)
-        //{
-        //    tmpMatrixOfCrosses.Add(new List<Int16>());
-        //    for (Int32 j = 0; j < totalCountCrosses; j++)
-        //    {
-        //        tmpMatrixOfCrosses[i].Add(0);
-        //    }
-        //}
 
         rand = new Random();
 
         SetARandomMatrixGraph(totalCountCrosses, rand,
                                 countConnectsList, ref countAllExits,
                                                     tmpMatrixOfCrosses);
-        //while (countAllExits != 0) 
-        //{
-        //    int firstVertex = rand.Next(0, totalCountCrosses);
-        //    int secondVertex = rand.Next(0, totalCountCrosses);
-        //    
-        //    while (countConnectsList[firstVertex] == 0 ||
-        //            countConnectsList[secondVertex] == 0 ||
-        //            (secondVertex == firstVertex && countConnectsList[firstVertex] < 2)) 
-        //    {
-        //        secondVertex = rand.Next(0, totalCountCrosses);
-        //        firstVertex = rand.Next(0, totalCountCrosses);
-        //    }
-        //
-        //    tmpMatrixOfCrosses[firstVertex][secondVertex] += 1;
-        //    
-        //    countConnectsList[firstVertex]--;
-        //    countConnectsList[secondVertex]--;
-        //    countAllExits -= 2;
-        //}
 
         AddCorridorsToTheGraphByMatrix(tmpMatrixOfCrosses, totalCountCrosses, 1, listOfCrossesId, resGraph);
-        //int countOfCorridors = 0;
-        //for (int i = 0; i < totalCountCrosses; i++)
-        //{
-        //    for (int j = 0; j < totalCountCrosses; j++)
-        //    {
-        //        while (tmpMatrixOfCrosses[i][j] != 0)
-        //        {
-        //            Node corridor = new Node(totalCountCrosses + countOfCorridors, 1, NodeType.Corridor);
-        //            countOfCorridors++;
-        //            resGraph.AddNode(corridor);
-        //
-        //            resGraph.ConnectNodes(listOfCrossesId[i], corridor.Id);
-        //            resGraph.ConnectNodes(corridor.Id, listOfCrossesId[j]);
-        //            tmpMatrixOfCrosses[i][j] -= 1;
-        //        }
-        //    }
-        //}
 
         return resGraph;
     }
