@@ -18,7 +18,7 @@ public class CreaterGraph : MonoBehaviour
 
     [SerializeField] private Int32 countCrossNode;
     [SerializeField] private Int32 maxCountExits;
-    [SerializeField] private Int16 countCorridorsNode;
+    [SerializeField] private Int32 countCorridorsNode;
 
     [SerializeField] private GameObject prefabNode;
     [SerializeField] private GameObject prefabLine;
@@ -26,9 +26,24 @@ public class CreaterGraph : MonoBehaviour
     List<GameObject> nodes = new List<GameObject>();
     List<GameObject> lines = new List<GameObject>();
 
-    private void Awake()
-    {
 
+    public Int32 CountCrosses 
+    {
+        get { return countCrossNode; }
+    }
+
+    public Int32 CountCorridors
+    {
+        get { return countCorridorsNode; }
+    }
+
+    //private void Awake()
+    //{
+    //    CreateGraph();
+    //}
+
+    public Graph CreateGraph()
+    {
         graph = GenerateGraphWithTheAdditionOfDimensions(countCrossNode, maxCountExits, countCorridorsNode);
 
         Int64 count = graph.CountNode;
@@ -38,6 +53,8 @@ public class CreaterGraph : MonoBehaviour
             nodes.Add(Instantiate(prefabNode, GetNodePosition(i, countCrossNode, countCorridorsNode, tmp.Type, tmp.Dimension), new Quaternion()));
             nodes[(Int32)i].GetComponent<InfoNode>().node = graph.GetNodeById(i);
         }
+
+        return graph;
     }
 
     private void Start()
@@ -61,7 +78,7 @@ public class CreaterGraph : MonoBehaviour
         {
             Destroy(line);
         }
-
+        
         lines.Clear();
         for (short i = 0; i < countCrossNode; i++)
         {

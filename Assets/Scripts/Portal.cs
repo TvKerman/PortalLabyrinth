@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,6 +32,25 @@ namespace Labyrinth
             portal.GetComponent<MeshRenderer>().enabled = false;
         }
 
+        public bool IsConnected(Int32 dimension) 
+        {
+            if (dimension < 0 || dimension > 3) 
+            {
+                throw new ArgumentOutOfRangeException("dimension out of range");
+            }
+
+            return otherPortals[dimension] != null;
+        }
+
+        public void SetLink(Int32 dimension, Portal portal)  
+        {
+            if (dimension < 0 || dimension > 3)
+            {
+                throw new ArgumentOutOfRangeException("dimension out of range");
+            }
+
+            otherPortals[dimension] = portal.gameObject;
+        }
 
         private void OnTriggerEnter(Collider other)
         {
