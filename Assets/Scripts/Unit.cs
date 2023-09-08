@@ -10,9 +10,9 @@ namespace Labyrinth
     {
         private Int64 id;
         private Node infoNode;
-        [SerializeField] private List<Portal> portals;
+        [SerializeField] private List<Teleporter> portals;
 
-        public Portal GetPortal(Int32 index)  
+        public Teleporter GetTeleporter(Int32 index)  
         {
             if (index < 0 || index >= portals.Count) 
             { 

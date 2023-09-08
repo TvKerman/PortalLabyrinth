@@ -51,6 +51,7 @@ public class CreaterGraph : MonoBehaviour
         {
             Node tmp = graph.GetNodeById(i);
             nodes.Add(Instantiate(prefabNode, GetNodePosition(i, countCrossNode, countCorridorsNode, tmp.Type, tmp.Dimension), new Quaternion()));
+            nodes[(Int32)i].transform.SetParent(this.transform);
             nodes[(Int32)i].GetComponent<InfoNode>().node = graph.GetNodeById(i);
         }
 
@@ -85,6 +86,7 @@ public class CreaterGraph : MonoBehaviour
             for (short j = 0; j < nodes[i].GetComponent<InfoNode>().node.Childs.Count; j++)
             {
                 GameObject line = Instantiate(prefabLine, new Vector3(), new Quaternion());
+
                 lines.Add(line);
                 line.GetComponent<LineRenderer>().SetPosition(0, nodes[i].transform.position);
                 line.GetComponent<LineRenderer>().SetPosition(1,
