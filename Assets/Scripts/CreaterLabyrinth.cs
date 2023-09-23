@@ -19,7 +19,7 @@ public class CreaterLabyrinth : MonoBehaviour
     {
         if (id > crosses[crosses.Count - 1].GetComponent<Labyrinth.Unit>().Info.Id)
         {
-            return corridors[id - crosses.Count + 1];
+            return corridors[id - crosses.Count];
         }
         else
         {

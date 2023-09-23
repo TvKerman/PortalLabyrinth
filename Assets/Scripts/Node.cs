@@ -17,7 +17,7 @@ namespace Labyrinth
 
         private NodeType type;
         private int id;
-        
+
         private int exitCount;
         private int dimension;
 

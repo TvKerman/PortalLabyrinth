@@ -8,8 +8,9 @@ namespace Labyrinth
 {
     public class Unit : MonoBehaviour
     {
-        private int id;
-        private Node infoNode;
+        public int id;
+        public List<int> childs;
+        public Node infoNode;
         [SerializeField] private List<Teleporter> portals;
 
         public Teleporter GetTeleporter(int index)  
@@ -36,6 +37,7 @@ namespace Labyrinth
                 if (infoNode != null) 
                 {
                     id = infoNode.Id;
+                    childs = infoNode.Childs;
                 }
             }
         }

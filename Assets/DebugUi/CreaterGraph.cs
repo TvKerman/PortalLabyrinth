@@ -51,53 +51,53 @@ public class CreaterGraph : MonoBehaviour
     {
         graph = GenerateGraphWithTheAdditionOfDimensions(countCrossNode, maxCountExits, countCorridorsNode);
 
-        int count = graph.CountNode;
-        for (int i = 0; i < count; i++)
-        {
-            Node tmp = graph.GetNodeById(i);
-            nodes.Add(Instantiate(prefabNode, GetNodePosition(i, countCrossNode, countCorridorsNode, tmp.Type, tmp.Dimension), new Quaternion()));
-            nodes[(int)i].transform.SetParent(this.transform);
-            nodes[(int)i].GetComponent<InfoNode>().node = graph.GetNodeById(i);
-        }
+        //int count = graph.CountNode;
+        //for (int i = 0; i < count; i++)
+        //{
+        //    Node tmp = graph.GetNodeById(i);
+        //    nodes.Add(Instantiate(prefabNode, GetNodePosition(i, countCrossNode, countCorridorsNode, tmp.Type, tmp.Dimension), new Quaternion()));
+        //    nodes[(int)i].transform.SetParent(this.transform);
+        //    nodes[(int)i].GetComponent<InfoNode>().node = graph.GetNodeById(i);
+        //}
 
         return graph;
     }
 
     private void Start()
     {
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            if (nodes[i].GetComponent<InfoNode>().node.Type == Labyrinth.NodeType.Corridor)
-            {
-                nodes[i].GetComponent<MeshRenderer>().materials[0].color = Color.blue;
-            }
-            else
-            {
-                nodes[i].GetComponent<MeshRenderer>().materials[0].color = Color.red;
-            }
-        }
+        //for (int i = 0; i < nodes.Count; i++)
+        //{
+        //    if (nodes[i].GetComponent<InfoNode>().node.Type == Labyrinth.NodeType.Corridor)
+        //    {
+        //        nodes[i].GetComponent<MeshRenderer>().materials[0].color = Color.blue;
+        //    }
+        //    else
+        //    {
+        //        nodes[i].GetComponent<MeshRenderer>().materials[0].color = Color.red;
+        //    }
+        //}
     }
 
     private void Update()
     {
-        foreach (var line in lines)
-        {
-            Destroy(line);
-        }
-        
-        lines.Clear();
-        for (short i = 0; i < countCrossNode; i++)
-        {
-            for (short j = 0; j < nodes[i].GetComponent<InfoNode>().node.Childs.Count; j++)
-            {
-                GameObject line = Instantiate(prefabLine, new Vector3(), new Quaternion());
-
-                lines.Add(line);
-                line.GetComponent<LineRenderer>().SetPosition(0, nodes[i].transform.position);
-                line.GetComponent<LineRenderer>().SetPosition(1,
-                nodes[(int)(nodes[i].GetComponent<InfoNode>().node.Childs[j])].transform.position);
-            }
-        }
+        //foreach (var line in lines)
+        //{
+        //    Destroy(line);
+        //}
+        //
+        //lines.Clear();
+        //for (short i = 0; i < countCrossNode; i++)
+        //{
+        //    for (short j = 0; j < nodes[i].GetComponent<InfoNode>().node.Childs.Count; j++)
+        //    {
+        //        GameObject line = Instantiate(prefabLine, new Vector3(), new Quaternion());
+        //
+        //        lines.Add(line);
+        //        line.GetComponent<LineRenderer>().SetPosition(0, nodes[i].transform.position);
+        //        line.GetComponent<LineRenderer>().SetPosition(1,
+        //        nodes[(int)(nodes[i].GetComponent<InfoNode>().node.Childs[j])].transform.position);
+        //    }
+        //}
     }
 
     private Vector3 GetNodePosition(int idNode, int countCrossNode, int countCorridorNode,

@@ -25,11 +25,14 @@ public class RenderController : MonoBehaviour
             Debug.Log(currentId);
 
             GameObject rootNode = labyrinth.GetNode(currentId);
+            rootNode.SetActive(true);
             List<GameObject> childNodes = new List<GameObject>();
             List<int> tmp = rootNode.GetComponent<Labyrinth.Unit>().Info.Childs;
             foreach (var childId in tmp)
             {
-                childNodes.Add(labyrinth.GetNode(childId));
+                GameObject tmpChild = labyrinth.GetNode(childId);
+                tmpChild.SetActive(true);
+                childNodes.Add(tmpChild);
             }
 
             List<int> allId = creater.IdNodes;
