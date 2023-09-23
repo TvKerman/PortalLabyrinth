@@ -8,11 +8,11 @@ namespace Labyrinth
 {
     public class Unit : MonoBehaviour
     {
-        private Int64 id;
+        private int id;
         private Node infoNode;
         [SerializeField] private List<Teleporter> portals;
 
-        public Teleporter GetTeleporter(Int32 index)  
+        public Teleporter GetTeleporter(int index)  
         {
             if (index < 0 || index >= portals.Count) 
             { 
@@ -20,10 +20,8 @@ namespace Labyrinth
             }
             return portals[index];
         }
-
         
-
-        public Int32 GetCountPortals() 
+        public int GetCountPortals() 
         { 
             return portals.Count;
         }
@@ -39,6 +37,14 @@ namespace Labyrinth
                 {
                     id = infoNode.Id;
                 }
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                other.gameObject.GetComponent<PlayerInfo>().SetCurrentUnit(this);
             }
         }
     }

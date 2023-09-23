@@ -6,16 +6,26 @@ using UnityEngine;
 
 public class Graph
 {
-    private Dictionary<Int64, Node> vertices;
-    private Int64 countNode;
+    private Dictionary<int, Node> vertices;
+    private List<int> idList; 
+    private int countNode;
 
     public Graph()
     {
-        vertices = new Dictionary<Int64, Node>();
+        vertices = new Dictionary<int, Node>();
+        idList = new List<int>();
         countNode = 0;
     }
 
-    public Node GetNodeById(Int64 id)
+    public List<int> IdList
+    {
+        get
+        {
+            return idList;
+        }
+    }
+
+    public Node GetNodeById(int id)
     {
         Node tmp;
         vertices.TryGetValue(id,out tmp);
@@ -37,12 +47,13 @@ public class Graph
         }
         
         vertices.Add(nodeToAdd.Id, nodeToAdd);
+        idList.Add(nodeToAdd.Id);
         countNode++;
     }
 
-    public Int64 CountNode { get { return countNode; } }
+    public int CountNode { get { return countNode; } }
 
-    public void ConnectNodes(Int64 firstNodeId, Int64 secondNodeId)
+    public void ConnectNodes(int firstNodeId, int secondNodeId)
     {
         Node firstNode = GetNodeById(firstNodeId);
         Node secondNode = GetNodeById(secondNodeId);

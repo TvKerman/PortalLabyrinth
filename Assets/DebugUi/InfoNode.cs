@@ -9,10 +9,10 @@ public class InfoNode : MonoBehaviour
     public Labyrinth.Node node;
 
     [SerializeField] private Labyrinth.NodeType type;
-    [SerializeField] private Int64 id;
+    [SerializeField] private int id;
 
-    [SerializeField] private Int16 exitCount;
-    [SerializeField] private Int16 dimension;
+    [SerializeField] private int exitCount;
+    [SerializeField] private int dimension;
 
     private void Start()
     {

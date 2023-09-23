@@ -32,7 +32,7 @@ namespace Labyrinth
             portal.GetComponent<MeshRenderer>().enabled = false;
         }
 
-        public bool IsConnected(Int32 dimension) 
+        public bool IsConnected(int dimension) 
         {
             if (dimension < 0 || dimension > 3) 
             {
@@ -42,7 +42,7 @@ namespace Labyrinth
             return otherPortals[dimension] != null;
         }
 
-        public void SetLink(Int32 dimension, Portal portal)  
+        public void SetLink(int dimension, Portal portal)  
         {
             if (dimension < 0 || dimension > 3)
             {

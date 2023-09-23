@@ -176,6 +176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1905263062529680589}
   - component: {fileID: 5497408084005752175}
+  - component: {fileID: 3903873493630356787}
   m_Layer: 0
   m_Name: Crosses
   m_TagString: Untagged
@@ -220,6 +221,27 @@ MonoBehaviour:
   - {fileID: 4243544230448391221}
   - {fileID: 742671356946767397}
   - {fileID: 1602136568363353782}
+--- !u!65 &3903873493630356787
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6696275493100771777}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 16, y: 5, z: 11}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!1001 &214995117355216817
 PrefabInstance:
   m_ObjectHideFlags: 0

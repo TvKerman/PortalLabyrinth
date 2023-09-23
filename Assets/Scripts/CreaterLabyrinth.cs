@@ -15,6 +15,18 @@ public class CreaterLabyrinth : MonoBehaviour
 
     private Vector3 step = new Vector3(40f, 0f, 0f);
 
+    public GameObject GetNode(int id)
+    {
+        if (id > crosses[crosses.Count - 1].GetComponent<Labyrinth.Unit>().Info.Id)
+        {
+            return corridors[id - crosses.Count + 1];
+        }
+        else
+        {
+            return crosses[id];
+        }
+    }
+    
     private void Awake()
     {
         GenerateLabyrinth();
@@ -23,11 +35,11 @@ public class CreaterLabyrinth : MonoBehaviour
     private void GenerateLabyrinth() 
     {
         Graph graph = creater.CreateGraph();
-        Int32 countCrossNode = creater.CountCrosses;
-        Int32 countCorridorsNode = creater.CountCorridors;
+        int countCrossNode = creater.CountCrosses;
+        int countCorridorsNode = creater.CountCorridors;
         
         crosses = new List<GameObject>();
-        for (Int32 id = 0; id < countCrossNode; id++) 
+        for (int id = 0; id < countCrossNode; id++) 
         {
             GameObject cross = Instantiate(crossesPrefab[0], GetPosition(id, countCrossNode, countCorridorsNode), new Quaternion());
             cross.GetComponent<Labyrinth.Unit>().Info = graph.GetNodeById(id);
@@ -39,7 +51,7 @@ public class CreaterLabyrinth : MonoBehaviour
         }
         
         corridors = new List<GameObject>();
-        for (Int32 id = countCrossNode; id < countCrossNode + countCorridorsNode * 4; id++)
+        for (int id = countCrossNode; id < countCrossNode + countCorridorsNode * 4; id++)
         {
             GameObject corridor = Instantiate(corridorsPrefab[0], GetPosition(id, countCrossNode, countCorridorsNode), new Quaternion());
             corridor.GetComponent<Labyrinth.Unit>().Info = graph.GetNodeById(id);
@@ -50,13 +62,13 @@ public class CreaterLabyrinth : MonoBehaviour
             }
         }
         
-        for (Int32 id = 0; id < countCrossNode; id++)
+        for (int id = 0; id < countCrossNode; id++)
         {
             Labyrinth.Unit cross = crosses[id].GetComponent<Labyrinth.Unit>();
-            for (Int32 indexChild = 0; indexChild < cross.Info.Childs.Count; indexChild++)
+            for (int indexChild = 0; indexChild < cross.Info.Childs.Count; indexChild++)
             { 
-                Labyrinth.Unit corridor = corridors[(Int32)(cross.Info.Childs[indexChild] - (Int64)(countCrossNode))].GetComponent<Labyrinth.Unit>();
-                for (Int32 portalIndex = 0; portalIndex < cross.GetCountPortals(); portalIndex++) 
+                Labyrinth.Unit corridor = corridors[(int)(cross.Info.Childs[indexChild] - (int)(countCrossNode))].GetComponent<Labyrinth.Unit>();
+                for (int portalIndex = 0; portalIndex < cross.GetCountPortals(); portalIndex++) 
                 {
                     if (!cross.GetTeleporter(portalIndex).IsCreateListDimension()) 
                     {
@@ -90,10 +102,10 @@ public class CreaterLabyrinth : MonoBehaviour
             }
         }
 
-        for (Int32 id = 0; id < countCrossNode; id++) 
+        for (int id = 0; id < countCrossNode; id++) 
         {
             Labyrinth.Unit cross = crosses[id].GetComponent<Labyrinth.Unit>();
-            for (Int32 portalIndex = 0; portalIndex < cross.GetCountPortals(); portalIndex++) 
+            for (int portalIndex = 0; portalIndex < cross.GetCountPortals(); portalIndex++) 
             {
                 if (cross.GetTeleporter(portalIndex).IsCreateListDimension())
                 {
@@ -103,7 +115,7 @@ public class CreaterLabyrinth : MonoBehaviour
         }
     }
 
-    private Vector3 GetPosition(Int64 idNode, Int64 countCrossNode, Int64 countCorridorNode) 
+    private Vector3 GetPosition(int idNode, int countCrossNode, int countCorridorNode) 
     {
         return new Vector3(step.x * idNode, step.y * idNode, step.z * idNode);
     }

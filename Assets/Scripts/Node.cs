@@ -13,19 +13,19 @@ namespace Labyrinth
     
     public class Node
     {
-        private List<Int64> childs;
+        private List<int> childs;
 
         private NodeType type;
-        private Int64 id;
+        private int id;
         
-        private Int16 exitCount;
-        private Int16 dimension;
+        private int exitCount;
+        private int dimension;
 
         private Vector3 coordinates;
 
-        public Node(Int64 id, Int16 dimension)
+        public Node(int id, int dimension)
         {
-            childs = new List<Int64>();
+            childs = new List<int>();
 
             exitCount = 0;
             
@@ -33,12 +33,12 @@ namespace Labyrinth
             this.dimension = dimension;
         }
 
-        public Node(Int64 id, Int16 dimension, NodeType type) : this(id, dimension) 
+        public Node(int id, int dimension, NodeType type) : this(id, dimension) 
         {
             this.type = type;
         }
 
-        public Node(Int64 id, Int16 dimension, NodeType type, Int16 exits) : this(id, dimension, type) 
+        public Node(int id, int dimension, NodeType type, int exits) : this(id, dimension, type) 
         {
             this.exitCount = exits;
         }
@@ -49,23 +49,23 @@ namespace Labyrinth
             set { type = value; }
         }
 
-        public Int64 Id
+        public int Id
         {
             get { return id; }
         }
 
-        public List<Int64> Childs
+        public List<int> Childs
         {
             get { return childs; }
         }
 
-        public Int16 ExitCount
+        public int ExitCount
         {
             get { return exitCount; }
             set { exitCount = value; }
         }
 
-        public Int16 Dimension
+        public int Dimension
         {
             get { return dimension; }
         }
