@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 public class PortalRenderer : MonoBehaviour
 {
@@ -29,7 +31,7 @@ public class PortalRenderer : MonoBehaviour
         _material.SetInt("_DrawingFlag", 1);
     }
 
-    public void Render(Camera mainCamera, Transform otherPortal)
+    public void Render(Camera mainCamera, Transform otherPortal) //List<Transform> recursivePortal
     {
         // render if the camera sees the render object ("optimization")
         if (!_renderer.isVisible)
@@ -65,7 +67,7 @@ public class PortalRenderer : MonoBehaviour
         // Здесь мы устанавливаем правильную проекцию,
         // тем самым портальная камера больше не захватывает объекты между ней и порталом.
         SetupProjection(mainCamera, exitPoint);
-
+        
         // Запускаем рендер камеры 
         _portalCamera.Render();
     }

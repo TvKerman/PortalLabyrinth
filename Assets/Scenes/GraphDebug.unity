@@ -154,9 +154,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creater: {fileID: 1082662362}
   corridorsPrefab:
-  - {fileID: 8555494629627200440, guid: 9281f29debe1d32469a031a6f391f3b4, type: 3}
+  - {fileID: 367856482813248785, guid: c91c2496dd94746448124a6e61b423c0, type: 3}
+  - {fileID: 7006884289142844576, guid: 690b2a6b8442b564badeb91193b0affe, type: 3}
+  - {fileID: 1943748362910750099, guid: 131970187ba73c94c87a3dd8f74874cb, type: 3}
+  - {fileID: 9131248579639854062, guid: 337f8406b5cd6d3478fb81e12c8a03ea, type: 3}
   crossesPrefab:
-  - {fileID: 6696275493100771777, guid: 0ae350f2822c4e943a9de4877d7e7ce3, type: 3}
+  - {fileID: 3249950517116080328, guid: 3785d88a9e357fe41a99fcdcc0f98825, type: 3}
+  - {fileID: 2608893229058189266, guid: ec85c5e4248a5b9439ead8dde971397c, type: 3}
+  - {fileID: 8172544315513448147, guid: e40ea39b7ed3d4346976cf2ca580d90a, type: 3}
+  - {fileID: 495263478731741341, guid: 887e8ed7f05acc149816357cd12b9e5f, type: 3}
   mainCamera: {fileID: 1283705314}
 --- !u!4 &190855607
 Transform:

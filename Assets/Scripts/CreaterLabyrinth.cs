@@ -37,11 +37,12 @@ public class CreaterLabyrinth : MonoBehaviour
         Graph graph = creater.CreateGraph();
         int countCrossNode = creater.CountCrosses;
         int countCorridorsNode = creater.CountCorridors;
-        
+
+        System.Random rand = new System.Random();
         crosses = new List<GameObject>();
         for (int id = 0; id < countCrossNode; id++) 
         {
-            GameObject cross = Instantiate(crossesPrefab[0], GetPosition(id, countCrossNode, countCorridorsNode), new Quaternion());
+            GameObject cross = Instantiate(crossesPrefab[rand.Next(0, crossesPrefab.Count)], GetPosition(id, countCrossNode, countCorridorsNode), new Quaternion());
             cross.GetComponent<Labyrinth.Unit>().Info = graph.GetNodeById(id);
             crosses.Add(cross);
             for (int i = 0; i < 4; i++) 
@@ -53,7 +54,7 @@ public class CreaterLabyrinth : MonoBehaviour
         corridors = new List<GameObject>();
         for (int id = countCrossNode; id < countCrossNode + countCorridorsNode * 4; id++)
         {
-            GameObject corridor = Instantiate(corridorsPrefab[0], GetPosition(id, countCrossNode, countCorridorsNode), new Quaternion());
+            GameObject corridor = Instantiate(corridorsPrefab[rand.Next(0, corridorsPrefab.Count)], GetPosition(id, countCrossNode, countCorridorsNode), new Quaternion());
             corridor.GetComponent<Labyrinth.Unit>().Info = graph.GetNodeById(id);
             corridors.Add(corridor);
             for (int i = 0; i < 2; i++)

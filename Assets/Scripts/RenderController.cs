@@ -9,8 +9,6 @@ public class RenderController : MonoBehaviour
     [SerializeField] private PlayerInfo info;
     [SerializeField] private CreaterGraph creater;
     [SerializeField] private CreaterLabyrinth labyrinth;
-    private bool flag;
-    private int ctr;
 
     void Start()
     {
@@ -32,6 +30,7 @@ public class RenderController : MonoBehaviour
             {
                 GameObject tmpChild = labyrinth.GetNode(childId);
                 tmpChild.SetActive(true);
+                tmpChild.GetComponent<Labyrinth.Unit>().OpenTheDoor(true);
                 childNodes.Add(tmpChild);
             }
 

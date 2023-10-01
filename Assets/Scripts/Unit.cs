@@ -12,6 +12,7 @@ namespace Labyrinth
         public List<int> childs;
         public Node infoNode;
         [SerializeField] private List<Teleporter> portals;
+        [SerializeField] private List<GameObject> doors;
 
         public Teleporter GetTeleporter(int index)  
         {
@@ -25,6 +26,14 @@ namespace Labyrinth
         public int GetCountPortals() 
         { 
             return portals.Count;
+        }
+
+        public void OpenTheDoor(bool isOpen) 
+        {
+            foreach (var door in doors)
+            {
+                door.SetActive(isOpen);
+            }
         }
 
         public Node Info 
@@ -47,6 +56,7 @@ namespace Labyrinth
             if (other.CompareTag("Player"))
             {
                 other.gameObject.GetComponent<PlayerInfo>().SetCurrentUnit(this);
+                OpenTheDoor(false);
             }
         }
     }

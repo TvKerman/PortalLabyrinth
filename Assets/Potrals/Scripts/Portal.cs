@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class Portal : MonoBehaviour
 {
+    [SerializeField] private List<Portal> _listExitPortal;
     [SerializeField] private Portal _currentExitPortal;
     [SerializeField] private PortalRenderer _renderer;
     
